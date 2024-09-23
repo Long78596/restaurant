@@ -73,4 +73,7 @@ Route::group(["prefix"=> "admin/order"], function() {
     Route::post("/findByIdTable", [OrderController::class, "FindByIdTable" ])->name("ByIdBan");
     Route::post("/AddMonByorder", [OrderController::class, "AddMonByorder"])->name("AddMonByorder");
     Route::post("/LoadFoodBeOrder", [OrderController::class, "LoadFoodBeOrder"])->name("LoadMonByorder");
+    Route::post("/update", [OrderController::class, "update"])->name("update");
+    Route::post("/deletedetailorder", [OrderController::class, "deleteorder"])->name("delete");
+    Route::post("/updatediscount", [OrderController::class, "updatedetail"])->name("updatedetail");
 });

@@ -8,6 +8,7 @@ use App\Models\OrderDetail;
 use App\Models\Table;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use PHPViet\NumberToWords\Transformer;
 
 class OrderController extends Controller
 {
@@ -132,12 +133,101 @@ class OrderController extends Controller
             ]);
         } else {
             $foods = OrderDetail::where('order_id', $request->order_id)->get();
+            $grandtotal = 0;
+            foreach ($foods as $key => $value) {
+                $grandtotal += $value->total_amount;
+            }
+            $transformer = new Transformer();
+            $discount = $order->discount;
+            $total_amount = $grandtotal - $discount;
+
 
             return response()->json([
                 'status' => true,
                 'list' => $foods,
+                'grandtotal' => $grandtotal,
+                'total_amount' => $total_amount,
+                'wrttien_money' => $transformer->toCurrency($grandtotal),
+                'real_amount' => $transformer->toCurrency($grandtotal),
+
+
+
             ]);
         }
     }
+    public function update(Request $request)
+    {
+        $order = Order::find($request->order_id);
+        //dd($order);
+        $orderdetail = OrderDetail::find($request->id);
+        //dd($orderdetail);
+        if ($order && $order->status == 0  && $orderdetail->is_printed_to_kitchen == 0) {
+            $orderdetail->quantity_sold = $request->quantity_sold;
+            $orderdetail->total_amount = $request->quantity_sold * $request->sale_price;
+            $orderdetail->note = $request->note;
+            $orderdetail->discount_amount = $request->discount_amount;
 
+
+            if ($request->discount_amount > $orderdetail->total_amount) {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => 'Tiền chiết khấu chỉ được tối đa: ' . number_format($orderdetail->discount, 0, '.', '.') . 'đ',
+                ]);
+            } else {
+                $orderdetail->total_amount = $orderdetail->total_amount - $request->discount_amount;
+                //dd($orderdetail);
+                $orderdetail->save();
+
+                return response()->json([
+                    'status'    => 1,
+                    'message'   => 'Đã cập nhật thành công!',
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Có lỗi không mong muốn xảy ra!',
+            ]);
+        }
+    }
+    public function deleteorder(Request $request)
+    {
+
+        $order = Order::find($request->order_id);
+        $orderdetail = OrderDetail::find($request->id);
+        if ($order && $order->status == 0 && $orderdetail->is_printed_to_kitchen == 0) {
+            $orderdetail->delete();
+            return response()->json([
+                'status'    => 1,
+                'message'   => 'Đã xóa thành công!',
+            ]);
+        } else {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Đã xóa  khôngthành công!',
+            ]);
+        }
+    }
+    public function updatedetail(Request $request)
+    {
+        $order = Order::find($request->id);
+        if ($order && $order->status == 0) {
+            $order->discount = $request->discount;
+
+
+            // dd($order->toArray());
+
+            if ($order->save()) {
+                return response()->json([
+                    'status' => 1,
+                    'message' => 'Đã cập nhật lại hóa đơn thành công!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Không thể cập nhật hóa đơn.',
+                ]);
+            }
+        }
+    }
 }

@@ -109,8 +109,8 @@
                                                 <th class="align-middle text-nowrap text-center"><button
                                                         class="btn btn-primary">Xác Nhận</button></th>
                                                 <th class="text-center align-middle">Tổng Tiền</th>
-                                                <td class="align-middle"><b>0&nbsp;₫</b></td>
-                                                <td class="align-middle"><i class="text-capitalize"></i></td>
+                                                <td class="align-middle"><b>@{{ number_format(total_amount) }}</b></td>
+                                                <td class="align-middle"><i class="text-capitalize">@{{ wrttien_money }}</i></td>
                                             </tr>
                                             <tr>
                                                 <th class="text-center">#</th>
@@ -125,26 +125,33 @@
                                         <tbody>
                                             <template v-for="(value, key) in  list_food_by_order">
                                                 <tr>
+                                                    <template v-if="value.is_printed_to_kitchen">
                                                       <td class="align-middle">@{{key+1 }}
                                                         </td>
+                                                        </template>
+                                                        <template v-else>
+                                                         <i class="fa-solid fa-trash-can text-danger" v-on:click="deleteOrderDetail(value)"></i>
+                                                        </template>
                                                     <td class="align-middle">@{{ value.food_name }}
                                                        </td>
                                                        <td class="align-middle text-center" style="width: 15%;">
-                                                        <input v-model="value.quantity_sold" type="number"
+                                                        <input v-on:change="update(value)" v-model="value.quantity_sold" type="number"
                                                             class="form-control text-center" step="0.1"
                                                             min="0.1">
                                                     </td>
 
                                                     <td class="align-middle text-center" style="width: 15%;">
-                                                        <input v-model="value.sale_price" type="number"
+                                                        <input v-on:change="update(value)" v-model="value.sale_price" type="number"
                                                             class="form-control text-center" step="0.1"
                                                             min="0.1">
                                                     </td>
-                                                     <td></td>
+                                                     <td>
+                                                        <input v-on:change="update(value)" v-model="value.discount_amount" type="number" class="form-control" min="0">
+                                                     </td>
 
                                                     <td class="align-middle text-end">@{{ number_format(value.total_amount) }}</td>
                                                     <td class="align-middle" style="width: 25%;">
-                                                        <input v-model="value.note" type="text" class="form-control">
+                                                        <input v-on:change="update(value)" v-model="value.note" type="text" class="form-control">
                                                     </td>
 
                                                 </tr>
@@ -153,10 +160,10 @@
                                         <tfoot>
                                             <tr>
                                                 <th colspan="2" class="text-center">Giảm giá</th>
-                                                <td colspan="2"><input type="text" class="form-control"></td>
+                                                <td colspan="2"><input type="text" v-on:change="updateDiscount()" v-model="discount" class="form-control"></td>
                                                 <th class="text-center">Thực trả</th>
                                                 <th class="text-danger">
-                                                    0&nbsp;₫
+                                                   @{{real_amount}}
                                                 </th>
                                                 <td><i></i></td>
                                             </tr>
@@ -189,7 +196,12 @@
                     add_order: {
                         "order_id": 0,
                         "table_id": 0
-                    }
+                    },
+                    grandtotal:0,
+                    total_amount:0,
+                    wrttien_money:"",
+                    real_amount:"",
+                    discount:0,
                 },
                 created() {
                     this.loadBan();
@@ -263,6 +275,7 @@
                             .then((res) => {
                                 if (res.data.status) {
                                     toastr.success(res.data.message);
+                                     this.LoadFoodBeorder(this.add_order.order_id)
                                 } else {
                                     toastr.error(res.data.message);
                                 }
@@ -278,15 +291,79 @@
                             'order_id': order_id
                         };
 
-                        console.log("Payload gửi đi:", payload);
+                        //console.log("Payload gửi đi:", payload);
 
                         axios
                             .post('/admin/order/LoadFoodBeOrder', payload)
                             .then((res) => {
                               console.log("Danh sách món ăn:", res.data.list);
                                 this.list_food_by_order = res.data.list;
+                                this.grandtotal=res.data.grandtotal;
+                                this.total_amount=res.data.total_amount;
+                                this.wrttien_money=res.data.wrttien_money;
+                                this.real_amount=res.data.real_amount;
                             });
                     },
+                    update(v){
+
+
+
+                        axios
+                            .post('/admin/order/update', v)
+                            .then((res) => {
+                                if (res.data.status) {
+                                    toastr.success(res.data.message);
+
+                                } else {
+                                    toastr.error(res.data.message);
+                                }
+                                this.LoadFoodBeorder(v.order_id)
+                            })
+                            .catch((res) => {
+                                $.each(res.response.data.errors, function(k, v) {
+                                    toastr.error(v[0]);
+                                });
+                            });
+                    },
+                    deleteOrderDetail(v){
+                        axios
+                            .post('/admin/order/deletedetailorder', v)
+                            .then((res) => {
+                                if (res.data.status) {
+                                    toastr.success(res.data.message);
+
+                                } else {
+                                    toastr.error(res.data.message);
+                                }
+                                this.LoadFoodBeorder(v.order_id)
+                            })
+                            .catch((res) => {
+                                $.each(res.response.data.errors, function(k, v) {
+                                    toastr.error(v[0]);
+                                });
+                            });
+                    },
+                    updateDiscount(){
+                        var payload={
+                            'id'        :   this.add_order.order_id,
+                        'discount'  :   this.discount,
+                        }
+                        //console.log(payload);
+                          axios
+                            .post('/admin/order/updatediscount', payload)
+                            .then((res) => {
+                                if (res.data.status) {
+                                    toastr.success(res.data.message);
+                                  this.LoadFoodBeorder(this.add_order.order_id)
+                                } else {
+                                    toastr.error(res.data.message);
+                                }
+
+                            });
+
+
+                    },
+
 
 
                     number_format(number) {
