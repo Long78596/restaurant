@@ -16,5 +16,6 @@ class Table extends Model
         'opening_price',
         'hourly_rate',
         'status',
+        'state',
     ];
 }

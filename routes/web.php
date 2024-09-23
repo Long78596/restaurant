@@ -5,6 +5,7 @@ use App\Http\Controllers\TableController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OrderController;
 use App\Models\Region;
 use Illuminate\Support\Facades\Route;
 
@@ -65,4 +66,11 @@ Route::group(["prefix" => "admin/customer"], function () {
     Route::post("/delete", [CustomerController::class, "delete"])->name("delete");
     Route::post("/deleteAll", [CustomerController::class, "destroyAll"])->name("deleteAll");
     Route::post("/checkSlug", [CustomerController::class, "checkSlug"])->name("checkSlug");
+});
+Route::group(["prefix"=> "admin/order"], function() {
+    Route::get("/index", [OrderController::class, "index"])->name("index");
+    Route::post("/opentable", [OrderController::class, "opentable"])->name("opentable");
+    Route::post("/findByIdTable", [OrderController::class, "FindByIdTable" ])->name("ByIdBan");
+    Route::post("/AddMonByorder", [OrderController::class, "AddMonByorder"])->name("AddMonByorder");
+    Route::post("/LoadFoodBeOrder", [OrderController::class, "LoadFoodBeOrder"])->name("LoadMonByorder");
 });
