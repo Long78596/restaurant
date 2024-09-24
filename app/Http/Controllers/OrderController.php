@@ -230,4 +230,50 @@ class OrderController extends Controller
             }
         }
     }
+    public function Confirmcustomer(Request $request)
+    {
+        $order = Order::find($request->id);
+        //dd($order);
+        //dd($order && $order->status == 0);
+        if ($order && $order->status == 0) {
+            // dd($order->is_confirmed ==0);
+            if ($order->is_confirmed == 0) {
+                $order->customer_id = $request->customer_id;
+                $order->is_confirmed = 1;
+                $order->save();
+            }
+            return response()->json([
+                'status'    => 1,
+                'message'   => 'Đã xác nhận khách thành công!',
+                'data'      => $order,
+            ]);
+        } else {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Hóa đơn này đã tính tiền!',
+            ]);
+        }
+    }
+    public function InKitChen(Request $request)
+    {
+        $order = Order::find($request->order_id);
+        //dd($order);
+        //dd($order && $order->status ==0);
+        if ($order && $order->status == 0) {
+
+            OrderDetail::where("order_id", $request->order_id)
+                ->update([
+                "is_served" => 1,
+                ]);
+            return response()->json([
+                'status'    => 1,
+                'message'   => 'Đã cuyển sang bộ phận nấu ăn thành công!',
+            ]);
+        }
+        return response()->json([
+            'status'    => 0,
+            'message'   => 'Hóa đơn này đã tính tiền!',
+        ]);
+    }
+
 }

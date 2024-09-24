@@ -6,6 +6,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDetailController;
+use App\Models\OrderDetail;
 use App\Models\Region;
 use Illuminate\Support\Facades\Route;
 
@@ -76,4 +78,11 @@ Route::group(["prefix"=> "admin/order"], function() {
     Route::post("/update", [OrderController::class, "update"])->name("update");
     Route::post("/deletedetailorder", [OrderController::class, "deleteorder"])->name("delete");
     Route::post("/updatediscount", [OrderController::class, "updatedetail"])->name("updatedetail");
+    Route::post("/Confirmcustomer", [OrderController::class, "Confirmcustomer"])->name("Confirmcustomer");
+    Route::post("/In-Kitchen", [OrderController::class, "InKitChen"])->name("InKitChen");
+    Route::get("/get-menu", [OrderDetailController::class, "index"])->name("index");
+    Route::get("/get-menu-in-serverd", [OrderDetailController::class, "GetMenu"])->name("GetMenuserve");
+    Route::post("/update-kitchen", [OrderDetailController::class, "Updatekitchen"]);
+    Route::post("/update-all", [OrderDetailController::class, "Updateall"]);
+
 });

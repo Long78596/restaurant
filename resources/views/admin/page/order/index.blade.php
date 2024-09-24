@@ -102,15 +102,30 @@
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th colspan="3" class="align-middle"><select disabled="disabled"
-                                                        class="form-control">
-                                                        <option value="31">Nguyễn Như Tài</option>
-                                                    </select></th>
+                                                <th colspan="3" class="align-middle">
+
+                                                <select v-if="order.is_confirmed == 0" class="form-control" v-model="order.order_id">
+                                                        <template v-for="(value, key) in list_customer">
+                                                            <option v:bind:value="value.id">@{{ value.full_name }}</option>
+                                                        </template>
+
+                                                    </select>
+                                                    <select v-else disabled="disabled" class="form-control" v-model="order.order_id">
+                                                        <template v-for="(value, key) in list_customer">
+                                                            <option v:bind:value="value.id">@{{ value.full_name }}</option>
+                                                        </template>
+
+                                                    </select>
+                                                </th>
                                                 <th class="align-middle text-nowrap text-center"><button
-                                                        class="btn btn-primary">Xác Nhận</button></th>
+                                                        class="btn btn-primary" v-if="order.is_confirmed == 1" disabled>Xác Nhận</button>
+                                                         <button v-else class="btn btn-primary" v-on:click="ComfiredCustomer()">Xác Nhận</button>
+                                                         <a href="/admin/customer/index" class="btn btn-info" target="_blank">Thêm khách hàng mới</a>
+                                                    </th>
                                                 <th class="text-center align-middle">Tổng Tiền</th>
                                                 <td class="align-middle"><b>@{{ number_format(total_amount) }}</b></td>
-                                                <td class="align-middle"><i class="text-capitalize">@{{ wrttien_money }}</i></td>
+                                                <td class="align-middle"><i
+                                                        class="text-capitalize">@{{ wrttien_money }}</i></td>
                                             </tr>
                                             <tr>
                                                 <th class="text-center">#</th>
@@ -125,33 +140,36 @@
                                         <tbody>
                                             <template v-for="(value, key) in  list_food_by_order">
                                                 <tr>
-                                                    <template v-if="value.is_printed_to_kitchen">
-                                                      <td class="align-middle">@{{key+1 }}
+                                                    <template v-if="value.is_served">
+                                                        <td class="align-middle">@{{ key + 1 }}
                                                         </td>
-                                                        </template>
-                                                        <template v-else>
-                                                         <i class="fa-solid fa-trash-can text-danger" v-on:click="deleteOrderDetail(value)"></i>
-                                                        </template>
+                                                    </template>
+                                                    <template v-else>
+                                                        <i class="fa-solid fa-trash-can text-danger"
+                                                            v-on:click="deleteOrderDetail(value)"></i>
+                                                    </template>
                                                     <td class="align-middle">@{{ value.food_name }}
-                                                       </td>
-                                                       <td class="align-middle text-center" style="width: 15%;">
-                                                        <input v-on:change="update(value)" v-model="value.quantity_sold" type="number"
-                                                            class="form-control text-center" step="0.1"
-                                                            min="0.1">
+                                                    </td>
+                                                    <td class="align-middle text-center" style="width: 15%;">
+                                                        <input v-on:change="update(value)" v-model="value.quantity_sold"
+                                                            type="number" class="form-control text-center"
+                                                            step="0.1" min="0.1">
                                                     </td>
 
                                                     <td class="align-middle text-center" style="width: 15%;">
-                                                        <input v-on:change="update(value)" v-model="value.sale_price" type="number"
-                                                            class="form-control text-center" step="0.1"
-                                                            min="0.1">
+                                                        <input v-on:change="update(value)" v-model="value.sale_price"
+                                                            type="number" class="form-control text-center"
+                                                            step="0.1" min="0.1">
                                                     </td>
-                                                     <td>
-                                                        <input v-on:change="update(value)" v-model="value.discount_amount" type="number" class="form-control" min="0">
-                                                     </td>
+                                                    <td>
+                                                        <input v-on:change="update(value)" v-model="value.discount_amount"
+                                                            type="number" class="form-control" min="0">
+                                                    </td>
 
                                                     <td class="align-middle text-end">@{{ number_format(value.total_amount) }}</td>
                                                     <td class="align-middle" style="width: 25%;">
-                                                        <input v-on:change="update(value)" v-model="value.note" type="text" class="form-control">
+                                                        <input v-on:change="update(value)" v-model="value.note"
+                                                            type="text" class="form-control">
                                                     </td>
 
                                                 </tr>
@@ -160,10 +178,11 @@
                                         <tfoot>
                                             <tr>
                                                 <th colspan="2" class="text-center">Giảm giá</th>
-                                                <td colspan="2"><input type="text" v-on:change="updateDiscount()" v-model="discount" class="form-control"></td>
+                                                <td colspan="2"><input type="text" v-on:change="updateDiscount()"
+                                                        v-model="discount" class="form-control"></td>
                                                 <th class="text-center">Thực trả</th>
                                                 <th class="text-danger">
-                                                   @{{real_amount}}
+                                                    @{{ real_amount }}
                                                 </th>
                                                 <td><i></i></td>
                                             </tr>
@@ -174,7 +193,7 @@
                         </div> <!---->
                     </div>
                     <div class="modal-footer"><button type="button" class="btn btn-danger">Chuyển Bàn</button> <!---->
-                        <button type="button" class="btn btn-primary">In Bếp</button> <a target="_blank"
+                        <button type="button" v-on:click="InKitChen(add_order.order_id)" class="btn btn-primary">In Bếp</button> <a target="_blank"
                             href="/admin/ban-hang/in-bill/0" class="btn btn-warning">In Bill</a> <button type="button"
                             class="btn btn-success">Thanh Toán</button>
                     </div>
@@ -193,20 +212,23 @@
                     order: {},
                     list_food: [],
                     list_food_by_order: [],
+                    list_customer: [],
                     add_order: {
                         "order_id": 0,
                         "table_id": 0
                     },
-                    grandtotal:0,
-                    total_amount:0,
-                    wrttien_money:"",
-                    real_amount:"",
-                    discount:0,
+                    grandtotal: 0,
+                    total_amount: 0,
+                    wrttien_money: "",
+                    real_amount: "",
+                    discount: 0,
+                    order:{},
                 },
                 created() {
                     this.loadBan();
                     this.loadFood();
                     this.LoadFoodBeorder();
+                    this.loadCustomer();
                 },
                 methods: {
                     loadBan() {
@@ -275,7 +297,7 @@
                             .then((res) => {
                                 if (res.data.status) {
                                     toastr.success(res.data.message);
-                                     this.LoadFoodBeorder(this.add_order.order_id)
+                                    this.LoadFoodBeorder(this.add_order.order_id)
                                 } else {
                                     toastr.error(res.data.message);
                                 }
@@ -296,15 +318,15 @@
                         axios
                             .post('/admin/order/LoadFoodBeOrder', payload)
                             .then((res) => {
-                              console.log("Danh sách món ăn:", res.data.list);
+                                console.log("Danh sách món ăn:", res.data.list);
                                 this.list_food_by_order = res.data.list;
-                                this.grandtotal=res.data.grandtotal;
-                                this.total_amount=res.data.total_amount;
-                                this.wrttien_money=res.data.wrttien_money;
-                                this.real_amount=res.data.real_amount;
+                                this.grandtotal = res.data.grandtotal;
+                                this.total_amount = res.data.total_amount;
+                                this.wrttien_money = res.data.wrttien_money;
+                                this.real_amount = res.data.real_amount;
                             });
                     },
-                    update(v){
+                    update(v) {
 
 
 
@@ -325,7 +347,7 @@
                                 });
                             });
                     },
-                    deleteOrderDetail(v){
+                    deleteOrderDetail(v) {
                         axios
                             .post('/admin/order/deletedetailorder', v)
                             .then((res) => {
@@ -343,24 +365,68 @@
                                 });
                             });
                     },
-                    updateDiscount(){
-                        var payload={
-                            'id'        :   this.add_order.order_id,
-                        'discount'  :   this.discount,
+                    updateDiscount() {
+                        var payload = {
+                            'id': this.add_order.order_id,
+                            'discount': this.discount,
                         }
                         //console.log(payload);
-                          axios
+                        axios
                             .post('/admin/order/updatediscount', payload)
                             .then((res) => {
                                 if (res.data.status) {
                                     toastr.success(res.data.message);
-                                  this.LoadFoodBeorder(this.add_order.order_id)
+                                    this.LoadFoodBeorder(this.add_order.order_id)
                                 } else {
                                     toastr.error(res.data.message);
                                 }
 
                             });
 
+
+                    },
+                    loadCustomer() {
+                        axios
+                            .get('{{ Route('data') }}')
+                            .then((res) => {
+                                this.list_customer = res.data.data;
+                            });
+                    },
+                    ComfiredCustomer() {
+                        axios
+                        .post('{{ Route("Confirmcustomer") }}', this.order)
+                        .then((res) => {
+                            if(res.data.status) {
+                                toastr.success(res.data.message);
+                                this.order = res.data.data;
+                            } else {
+                                toastr.error(res.data.message);
+                            }
+                        })
+                        .catch((res) => {
+                            $.each(res.response.data.errors, function(k, v) {
+                                toastr.error(v[0]);
+                            });
+                        });
+
+                    },
+                    InKitChen(order_id){
+                         var payload = {
+                            'order_id': order_id,
+
+                        }
+                        //console.log(payload);
+                        axios
+                            .post('/admin/order/In-Kitchen', payload)
+                            .then((res) => {
+                                if (res.data.status) {
+                                    toastr.success(res.data.message);
+                                    this.LoadFoodBeorder(payload.order_id)
+                                } else {
+                                    toastr.error(res.data.message);
+                                }
+
+                            });
 
                     },
 
