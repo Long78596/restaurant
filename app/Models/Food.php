@@ -15,6 +15,8 @@ class Food extends Model
         "image",
         "price",
         "status",
-        "category_id"
+        "category_id",
+        "total_input",
+        "tong_output",
     ];
 }

@@ -2,22 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CustomerCreateRequest;
-use App\Http\Requests\CustomerUpdateRequest;
-use App\Models\Customer;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
-class CustomerController extends Controller
+class SupplierController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('admin.page.customer.index');
+        return view('admin.page.suppliers.index');
     }
-    public function getdata(){
-        $list=Customer::orderBy("id")->get();
+    public function getdata()
+    {
+        $list = Supplier::orderBy("id")->get();
         return response()->json([
             "data" => $list
         ]);
@@ -26,21 +22,30 @@ class CustomerController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(CustomerCreateRequest $request)
+    public function create(Request $request)
     {
         $data = $request->all();
         //dd($data);
+        $request->validate([
+            'tax_code' => 'required|max:255',
+            'company_name' => 'required|max:255|min:5',
+            'phone_number' => 'required',
+            'email' => 'required',
+            'address' => 'required',
+            'status' => 'required',
 
-            Customer::create($data);
-            return response()->json([
-                "status" => true,
-                "message" => "Đã thêm thành công",
-            ]);
-        }
+        ]);
+
+        Supplier::create($data);
+        return response()->json([
+            "status" => true,
+            "message" => "Đã thêm thành công",
+        ]);
+    }
 
     public function changeStatus(Request $request)
     {
-        $check = Customer::where("id", $request->id)->first();
+        $check = Supplier::where("id", $request->id)->first();
         if ($check) {
             $check->status = !$check->status;
             return response()->json([
@@ -57,18 +62,18 @@ class CustomerController extends Controller
     public function checkSlug(Request $request)
     {
         if (isset($request->id)) {
-            $check = Customer::where("customer_name", $request->customer_name)
+            $check = Supplier::where("company_name", $request->company_name)
                 ->where("id", "<>", $request->id)->first();
         } else {
-            $check = Customer::where("customer_name", $request->customer_name)
+            $check = Supplier::where("company_name", $request->company_name)
                 ->first();
         }
-        if($check){
+        if ($check) {
             return response()->json([
                 "status" => true,
                 "message" => "có thể sử dụng",
             ]);
-        }else{
+        } else {
             return response()->json([
                 "status" => false,
                 "message" => "đã tồn tại",
@@ -89,9 +94,18 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CustomerUpdateRequest $request)
+    public function update(Request $request)
     {
-        $check = Customer::where("id", $request->id)->first();
+        $request->validate([
+            'tax_code' => 'required|max:255',
+            'company_name' => 'required|max:255|min:5',
+            'phone_number' => 'required',
+            'email' => 'required',
+            'address' => 'required',
+            'status' => 'required',
+
+        ]);
+        $check = Supplier::where("id", $request->id)->first();
         $data = $request->all();
         $check->update($data);
         return response()->json([
@@ -106,38 +120,12 @@ class CustomerController extends Controller
      */
     public function delete(Request $request)
     {
-        $customer = Customer::find($request->id);
-        $customer->delete();
+        $supplier = Supplier::find($request->id);
+        $supplier->delete();
         return response()->json([
             "status" => true,
             "message" => "Đã xóa  thành công",
         ]);
     }
-    public function deleteAll(Request $request){
-        $data=$request->all();
-        $str= "";
-        foreach($data as $key => $value){
-             if(isset($data["check"])){
-                $str .= $value[""] + ",";
-             }
-             $data_id =explode( ",", rtrim($str , ","));
-             foreach($data_id as $k => $v){
-                $customer = Customer::where("id", $v);
-                if($customer){
-                    $customer->delete();
-                    return response()->json([
-                        "status" => false,
-                        "message" => "có lỗi đã xã ray",
-                    ]);
-                }
 
-             }
-
-        }
-        return response()->json([
-            "status" => true,
-            "message" => "Đã xóa  thành công",
-        ]);
-
-    }
 }

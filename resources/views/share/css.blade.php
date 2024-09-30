@@ -17,12 +17,13 @@
 <link href="/admin/css/bootstrap-extended.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <link href="/admin/css/app.css" rel="stylesheet">
-<link href="/admin/css/icons.css" rel="stylesheet">
+
+ <link href="/admin/css/icons.css" rel="stylesheet">
 <!-- Theme Style CSS -->
 <link rel="stylesheet" href="/admin/css/dark-theme.css" />
 <link rel="stylesheet" href="/admin/css/semi-dark.css" />
 <link rel="stylesheet" href="/admin/css/header-colors.css" />
-<title>Rocker - Bootstrap 5 Admin Dashboard Template</title>
+<title>Restaurant</title>
 {{-- CSS Thêm Mới --}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />

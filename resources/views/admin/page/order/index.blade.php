@@ -7,10 +7,10 @@
             <div class="col-md-2">
                 <div class="card">
                     <div class="card-body text-center">
-                        <p v-if="value.state ==0" class="text-uppercase"><b>Bàn @{{ value.table_name }}</b></p>
-                        <p v-else-if="value.state ==1" class="text-uppercase text-primary"><b>Bàn @{{ value.table_name }}</b>
+                        <p v-if="value.state ==0" class="text-uppercase"><b> @{{ value.table_name }}</b></p>
+                        <p v-else-if="value.state ==1" class="text-uppercase text-primary"><b> @{{ value.table_name }}</b>
                         </p>
-                        <p v-else-if="value.state ==2" class="text-uppercase text-danger"><b>Bàn @{{ value.table_name }}</b>
+                        <p v-else-if="value.state ==2" class="text-uppercase text-danger"><b>@{{ value.table_name }}</b>
                         </p>
                         <i data-bs-toggle="modal" data-bs-target="#chiTietModal" v-if="value.state ==0"
                             v-on:click="OpenTable(value.id);FindByIdTable(value.id)"
@@ -42,15 +42,15 @@
 
 
 
-        <div id="chiTietModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade">
+         <div id="chiTietModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade">
             <div class="modal-dialog" style="max-width: 100%;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 id="exampleModalLabel" class="modal-title fs-5">Chi Tiết Bán Hàng </h1> <button type="button"
-                            data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                        <h1 id="exampleModalLabel" class="modal-title fs-5">Chi Tiết Bán Hàng @{{ add_order.order_id }} </h1>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
+                        <div class="row" v-if="state ==0">
                             <div class="col-5">
                                 <div class="card">
                                     <div class="card-body">
@@ -59,9 +59,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th class="align-middle">Tìm kiếm</th>
-                                                        <th colspan="4"><input type="text" class="form-control">
+                                                        <th colspan="4">
+                                                            <input v-model="key_search" v-on:keyup.enter="search()" type="text" class="form-control">
                                                         </th>
-                                                        <th class="text-center text-white"><button class="btn btn-info">Tìm
+                                                        <th class="text-center text-white"><button v-on:click="search()" class="btn btn-info">Tìm
                                                                 Kiếm</button></th>
                                                     </tr>
                                                     <tr>
@@ -104,13 +105,15 @@
                                             <tr>
                                                 <th colspan="3" class="align-middle">
 
-                                                <select v-if="order.is_confirmed == 0" class="form-control" v-model="order.order_id">
+                                                    <select v-if="order.is_confirmed == 0" class="form-control"
+                                                        v-model="order.order_id">
                                                         <template v-for="(value, key) in list_customer">
                                                             <option v:bind:value="value.id">@{{ value.full_name }}</option>
                                                         </template>
 
                                                     </select>
-                                                    <select v-else disabled="disabled" class="form-control" v-model="order.order_id">
+                                                    <select v-else disabled="disabled" class="form-control"
+                                                        v-model="order.order_id">
                                                         <template v-for="(value, key) in list_customer">
                                                             <option v:bind:value="value.id">@{{ value.full_name }}</option>
                                                         </template>
@@ -118,10 +121,13 @@
                                                     </select>
                                                 </th>
                                                 <th class="align-middle text-nowrap text-center"><button
-                                                        class="btn btn-primary" v-if="order.is_confirmed == 1" disabled>Xác Nhận</button>
-                                                         <button v-else class="btn btn-primary" v-on:click="ComfiredCustomer()">Xác Nhận</button>
-                                                         <a href="/admin/customer/index" class="btn btn-info" target="_blank">Thêm khách hàng mới</a>
-                                                    </th>
+                                                        class="btn btn-primary" v-if="order.is_confirmed == 1"
+                                                        disabled>Xác Nhận</button>
+                                                    <button v-else class="btn btn-primary"
+                                                        v-on:click="ComfiredCustomer()">Xác Nhận</button>
+                                                    <a href="/admin/customer/index" class="btn btn-info"
+                                                        target="_blank">Thêm khách hàng mới</a>
+                                                </th>
                                                 <th class="text-center align-middle">Tổng Tiền</th>
                                                 <td class="align-middle"><b>@{{ number_format(total_amount) }}</b></td>
                                                 <td class="align-middle"><i
@@ -190,12 +196,97 @@
                                     </table>
                                 </div>
                             </div>
-                        </div> <!---->
+
+                        </div>
+                        <div class="row" v-if="state == 1">
+                            <div class="col-5">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="align-middle">Chọn bàn</th>
+                                                <th>
+                                                    <select class="form-control" v-on:change= "loadListTable(id_table)"
+                                                        v-model="id_table">
+                                                        <option value="0">Chọn bàn cần chuyển món</option>
+                                                        <template v-for="(value, key) in list"
+                                                            v-if="value.status == 1 && value.status != 0">
+                                                            <option v-if="value.id != add_order.table_id"
+                                                                v-bind:value="value.id">@{{ value.table_name }}</option>
+                                                        </template>
+                                                    </select>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">#</th>
+                                                <th class="text-center">Tên Món</th>
+                                                <th class="text-center">Số Lượng</th>
+                                                <th class="text-center">Ghi Chú</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(value, key) in list_food_2">
+                                                <th class="text-center">@{{ key + 1 }}</th>
+                                                <td>@{{ value.food_name }}</td>
+                                                <td class="text-center">@{{ value.quantity_sold }}</td>
+                                                <td>@{{ value.note }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">#</th>
+                                                <th class="text-center">Tên Món</th>
+                                                <th class="text-center">Số Lượng</th>
+                                                <th class="text-center">Số Lượng Chuyển</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(value, key) in  list_food_by_order">
+                                                <th class="text-center align-middle">
+                                                    @{{ key + 1 }}
+                                                </th>
+                                                <td class="align-middle">@{{ value.food_name }} - @{{ value.id }}
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    @{{ value.quantity_sold }}
+                                                </td>
+                                                <td class="align-middle" style="width: 15%;">
+                                                    <input type="number" v-model= "value.number_transfer"
+                                                        class="form-control" min="0">
+                                                </td>
+                                                <td class="text-center">
+                                                    <button v-on:click="transfer(value)"
+                                                        class="btn btn-primary">Chuyển</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-footer"><button type="button" class="btn btn-danger">Chuyển Bàn</button> <!---->
-                        <button type="button" v-on:click="InKitChen(add_order.order_id)" class="btn btn-primary">In Bếp</button> <a target="_blank"
-                            href="/admin/ban-hang/in-bill/0" class="btn btn-warning">In Bill</a> <button type="button"
-                            class="btn btn-success">Thanh Toán</button>
+                    <div class="modal-footer">
+                        <button v-if="state == 0" v-on:click="state=1" type="button" class="btn btn-danger">Chuyển
+                            Bàn</button>
+                        <button v-if="state==1" v-on:click="state=0" type="button" class="btn btn-danger">Chuyển bàn
+                            thành công</button> <!---->
+                        <button type="button" v-on:click="InKitChen(add_order.order_id)" class="btn btn-primary">In
+                            Bếp</button> <a target="_blank" v-bind:href="'/admin/order/in-bill/' + add_order.order_id" class="btn btn-warning">In
+                            Bill</a> <button type="button" v-on:click="checkout()" class="btn btn-success">Thanh
+                            Toán</button>
                     </div>
                 </div>
             </div>
@@ -212,17 +303,22 @@
                     order: {},
                     list_food: [],
                     list_food_by_order: [],
+                    list_food_2: [],
                     list_customer: [],
+                    key_search:"",
                     add_order: {
                         "order_id": 0,
                         "table_id": 0
                     },
+                    state: 0,
                     grandtotal: 0,
                     total_amount: 0,
                     wrttien_money: "",
                     real_amount: "",
                     discount: 0,
-                    order:{},
+                    order: {},
+                    id_table: 0,
+                    id_order: 0,
                 },
                 created() {
                     this.loadBan();
@@ -231,6 +327,77 @@
                     this.loadCustomer();
                 },
                 methods: {
+                    search() {
+                    var payload = {
+                        'key_search'    :   this.key_search
+                    }
+                    //console.log(payload);
+                    axios
+                        .post('/admin/food/Search', payload)
+                        .then((res) => {
+                            this.list_food = res.data.list;
+                            console.log(this.list_food);
+                        })
+                        .catch((res) => {
+                            $.each(res.response.data.errors, function(k, v) {
+                                toastr.error(v[0]);
+                            });
+                        });
+                },
+                    checkout(){
+                        //console.log(this.add_order);
+                        axios
+                        .post('{{ Route("4") }}',this.add_order)
+                        .then((res) => {
+                            if(res.data.status) {
+                                this.loadBan();
+                                toastr.success(res.data.message);
+                                 var link = '/admin/order/in-bill/' + this.add_order.order_id;
+                                window.open(link,'_blank');
+                            } else {
+                                toastr.error(res.data.message);
+                            }
+                        });
+                    },
+                    transfer(v) {
+
+                        v['id_order'] = this.id_order;
+                        axios
+                            .post('{{ Route('3') }}', v)
+                            .then((res) => {
+                                if (res.data.status) {
+                                    this.LoadFoodBeorder(this.add_order.order_id);
+                                    this.loadListTable(this.id_table);
+                                    toastr.success(res.data.message);
+                                } else {
+                                    toastr.error(res.data.message);
+                                }
+                            });
+                    },
+                    loadListTable(id_table) {
+                        var payload = {
+                            'id_table': id_table,
+                        }
+                        //console.log(payload);
+                        axios
+                            .post('{{ Route('2') }}', payload)
+                            .then((res) => {
+                                if (res.data.status) {
+
+                                    //console.log(this.list_food_2  = res.data.data);
+                                    this.list_food_2 = res.data.data;
+                                    this.id_order = res.data.id_order;
+                                } else {
+                                    toastr.error(res.data.message);
+                                }
+                            })
+                            .catch((res) => {
+                                $.each(res.response.data.errors, function(k, v) {
+                                    toastr.error(v[0]);
+                                });
+                            });
+
+                    },
                     loadBan() {
                         axios
                             .get('/admin/table/data')
@@ -394,24 +561,24 @@
                     },
                     ComfiredCustomer() {
                         axios
-                        .post('{{ Route("Confirmcustomer") }}', this.order)
-                        .then((res) => {
-                            if(res.data.status) {
-                                toastr.success(res.data.message);
-                                this.order = res.data.data;
-                            } else {
-                                toastr.error(res.data.message);
-                            }
-                        })
-                        .catch((res) => {
-                            $.each(res.response.data.errors, function(k, v) {
-                                toastr.error(v[0]);
+                            .post('{{ Route('Confirmcustomer') }}', this.order)
+                            .then((res) => {
+                                if (res.data.status) {
+                                    toastr.success(res.data.message);
+                                    this.order = res.data.data;
+                                } else {
+                                    toastr.error(res.data.message);
+                                }
+                            })
+                            .catch((res) => {
+                                $.each(res.response.data.errors, function(k, v) {
+                                    toastr.error(v[0]);
+                                });
                             });
-                        });
 
                     },
-                    InKitChen(order_id){
-                         var payload = {
+                    InKitChen(order_id) {
+                        var payload = {
                             'order_id': order_id,
 
                         }

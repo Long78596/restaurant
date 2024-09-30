@@ -28,70 +28,65 @@
                 </ul>
             </li> --}}
             <li class="nav-item dropdown">
-                <a href="/admin/khu-vuc/vue" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                <a href="/admin/region/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
                     <div class="parent-icon"><i class="fa-solid fa-location-dot"></i>
                     </div>
                     <div class="menu-title">Khu Vực</div>
                 </a>
             </li>
             <li class="nav-item dropdown">
-                <a href="/admin/ban/vue" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                <a href="/admin/table/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
                     <div class="parent-icon"><i class="fa-solid fa-dragon"></i>
                     </div>
                     <div class="menu-title">Bàn</div>
                 </a>
             </li>
             <li class="nav-item dropdown">
-                <a href="/admin/danh-muc/vue" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                <a href="/admin/category/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
                     <div class="parent-icon"><i class="fa-regular fa-rectangle-list"></i>
                     </div>
                     <div class="menu-title">Danh Mục</div>
                 </a>
             </li>
             <li class="nav-item dropdown">
-                <a href="/admin/mon-an/vue" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                <a href="/admin/food/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
                     <div class="parent-icon"><i class="fa-solid fa-bowl-food"></i>
                     </div>
                     <div class="menu-title">Món Ăn</div>
                 </a>
             </li>
+
+
             <li class="nav-item dropdown">
-                <a href="/admin/loai-khach-hang" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
-                    <div class="parent-icon"><i class="fa-brands fa-intercom"></i>
-                    </div>
-                    <div class="menu-title">Loại Khách Hàng</div>
-                </a>
-            </li>
-            <li class="nav-item dropdown">
-                <a href="/admin/khach-hang" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
-                    <div class="parent-icon"><i class="fa-solid fa-person-military-pointing"></i>
-                    </div>
-                    <div class="menu-title">Khách Hàng</div>
-                </a>
-            </li>
-            <li class="nav-item dropdown">
-                <a href="/admin/nha-cung-cap/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                <a href="/admin/supplier/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
                     <div class="parent-icon"><i class="fa-solid fa-truck-field-un"></i>
                     </div>
                     <div class="menu-title">Nhà Cung Cấp</div>
                 </a>
             </li>
+             <li class="nav-item dropdown">
+                <a href="/admin/customer/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                    <div class="parent-icon"><i class="fa-solid fa-truck-field-un"></i>
+                    </div>
+                    <div class="menu-title">Khách hàng</div>
+                </a>
+            </li>
             <li class="nav-item dropdown">
-                <a href="/admin/ban-hang" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                <a href="/admin/order/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
                     <div class="parent-icon"><i class="fa-solid fa-calendar-check"></i>
                     </div>
                     <div class="menu-title">Bán Hàng</div>
                 </a>
             </li>
             <li class="nav-item dropdown">
-                <a href="/admin/nhap-hang" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                <a href="/admin/import/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
                     <div class="parent-icon"><i class="fa-solid fa-vault"></i>
                     </div>
                     <div class="menu-title">Nhập Hàng</div>
                 </a>
             </li>
             <li class="nav-item dropdown">
-                <a href="/admin/tai-khoan/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
+                <a href="/admin/admin/index" class="nav-link dropdown-toggle dropdown-toggle-nocaret">
                     <div class="parent-icon"><i class="fa-solid fa-user"></i></i>
                     </div>
                     <div class="menu-title">Tài Khoản</div>
@@ -105,35 +100,17 @@
                     <div class="menu-title">Menu</div>
                 </a>
                 <ul class="dropdown-menu">
-                    <li> <a class="dropdown-item" href="/admin/bep"><i class="fa-solid fa-fire-burner"></i>Menu Bếp</a>
+                    <li> <a class="dropdown-item" href="/admin/order/get-menu"><i class="fa-solid fa-fire-burner"></i>Menu Bếp</a>
                     </li>
-                    <li> <a class="dropdown-item" href="/admin/tiep-thuc"><i class="fa-solid fa-cart-flatbed-suitcase"></i></i>Menu Tiếp Thục</a>
+                    <li> <a class="dropdown-item" href="/admin/order/get-real"><i class="fa-solid fa-cart-flatbed-suitcase"></i></i>Menu Tiếp Thục</a>
                     </li>
                 </ul>
             </li>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle dropdown-toggle-nocaret"
-                    data-bs-toggle="dropdown">
-                    <div class="parent-icon"><i class="fa-solid fa-chart-simple"></i>
-                    </div>
-                    <div class="menu-title">Thống Kê</div>
-                </a>
-                <ul class="dropdown-menu">
-                    <li> <a class="dropdown-item" href="/admin/thong-ke/ban-hang"><i class="fa-solid fa-fire-burner"></i>Thống Kê Bán Hàng</a>
-                    </li>
-                    <li> <a class="dropdown-item" href="/admin/thong-ke/mon-an"><i class="fa-solid fa-cart-flatbed-suitcase"></i>Thống Kê Món Ăn Bán</a>
-                    </li>
-                    <li> <a class="dropdown-item" href="/admin/thong-ke/chart-mon-an"><i class="fa-solid fa-diagram-project"></i>Chart Món Ăn Bán</a>
-                    </li>
-                    <li> <a class="dropdown-item" href="/admin/thong-ke/chart"><i class="fa-solid fa-cart-flatbed-suitcase"></i></i>Chart</a>
-                        <li> <a class="dropdown-item" href="/admin/thong-ke/chart-js"><i class="fa-solid fa-cart-flatbed-suitcase"></i></i>Chart JS</a>
-                    </li>
-                </ul>
-            </li>
+
 
             <li class="nav-item">
-                <a class="nav-link" href="/admin/quyen">
+                <a class="nav-link" href="/admin/role/index">
                     <div class="parent-icon">
                         <i class="fa-solid fa-user-shield"></i>
                     </div>

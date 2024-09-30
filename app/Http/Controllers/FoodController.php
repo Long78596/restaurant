@@ -30,6 +30,20 @@ class FoodController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    public function search(Request $request)
+    {
+        $list = Food::
+        join("categories", "foods.category_id", "=", "categories.id")
+        ->select("foods.*", "categories.category_name")
+        ->where("title", "like", "%" . $request->key_search . "%")
+            ->get();
+            //dd($list);
+
+        return response()->json([
+            'list' => $list
+        ]);
+    }
+
     public function create(Request $request)
     {
         $data = $request->all();
@@ -113,7 +127,7 @@ class FoodController extends Controller
             'price' => 'required|numeric',
             'status' => 'required|boolean',
             'category_id' => 'required|integer',
-            // 'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $foods->title = $data["title"];
